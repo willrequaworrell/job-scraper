@@ -1,0 +1,99 @@
+{
+  "search_terms": [
+    "software engineer",
+    "frontend engineer",
+    "full stack engineer",
+    "ai engineer",
+    "web developer",
+    "react developer",
+    "javascript developer"
+  ],
+  "sites": [
+    "indeed",
+    "google"
+  ],
+  "hours_old": 168,
+  "results_per_search": 35,
+  "country_indeed": "USA",
+  "google_search_location": "Massachusetts",
+  "title_exclusion_terms": [
+    "intern",
+    "internship",
+    "senior",
+    "sr",
+    "lead",
+    "staff",
+    "principal",
+    "architect",
+    "director",
+    "distinguished",
+    "vp",
+    "vice president",
+    "manager"
+  ],
+  "keyword_include_any": [
+    "react",
+    "typescript",
+    "next.js",
+    "nextjs",
+    "python",
+    "frontend",
+    "full stack",
+    "full-stack",
+    "ai",
+    "builder",
+    "product engineer"
+  ],
+  "resurface_after_days": 7,
+  "send_empty_digest": true,
+  "email_from": "Job Digest <onboarding@resend.dev>",
+  "scoring": {
+    "openai_model": "gpt-4o-mini",
+    "digest_threshold": 70,
+    "top_match_threshold": 82,
+    "system_prompt_path": "prompts/scoring_system.md",
+    "expected_verdicts": [
+      "strong_match",
+      "possible_match",
+      "long_shot"
+    ]
+  },
+  "location": {
+    "allow_remote": true,
+    "accepted_local_terms": [
+      "massachusetts",
+      "ma",
+      "greater boston",
+      "boston",
+      "cambridge",
+      "somerville",
+      "brookline",
+      "waltham",
+      "watertown",
+      "lexington",
+      "newton",
+      "needham",
+      "quincy"
+    ],
+    "accepted_remote_terms": [
+      "remote",
+      "work from home"
+    ],
+    "accepted_us_terms": [
+      "united states",
+      "u.s.",
+      "usa",
+      "us"
+    ],
+    "rejected_remote_terms": [
+      "canada only",
+      "europe only",
+      "emea",
+      "apac",
+      "uk only",
+      "india only",
+      "germany only",
+      "singapore only"
+    ]
+  }
+}

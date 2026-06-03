@@ -1,0 +1,1 @@
+"""Job digest automation package."""
