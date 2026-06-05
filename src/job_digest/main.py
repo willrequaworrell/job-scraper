@@ -97,6 +97,9 @@ def main() -> int:
 
             job.score = scorer.score(job, settings)
             stats.scored += 1
+            stats.prompt_tokens += job.score.prompt_tokens
+            stats.completion_tokens += job.score.completion_tokens
+            stats.total_tokens += job.score.total_tokens
             if not args.dry_run:
                 store.record_score(job.identity, job.score, now)
 
@@ -149,6 +152,14 @@ def main() -> int:
                 store.record_surface(job.identity, run_id, surfaced_at)
 
         completed_at = utc_now()
+        daily_summary_path = _write_daily_summary(
+            run_id=run_id,
+            started_at=started_at,
+            completed_at=completed_at,
+            stats=stats,
+            settings=settings,
+            jobs=job_results,
+        )
         store.record_run(run_id, started_at, completed_at, stats, email_sent, subject)
         _write_debug_output(
             runtime.debug_output_path,
@@ -161,6 +172,7 @@ def main() -> int:
             email_subject=subject,
             jobs=job_results,
         )
+        logging.info("Wrote daily summary to %s", daily_summary_path)
         logging.info("Run complete. Stats=%s", asdict(stats))
         return 0
     finally:
@@ -224,6 +236,67 @@ def _write_application_packet(
     for packet_job in packet_jobs:
         store.record_surface(packet_job.job.identity, run_id, surfaced_at)
     return build_packet_subject(packet_jobs), render_application_packet_html(markdown), len(packet_jobs)
+
+
+def _write_daily_summary(
+    *,
+    run_id: str,
+    started_at: datetime,
+    completed_at: datetime,
+    stats: RunStats,
+    settings: Settings,
+    jobs: list[dict[str, object]],
+) -> Path:
+    path = Path("artifacts") / "daily_summaries" / f"{started_at.date().isoformat()}.md"
+    passed_jobs = [job for job in jobs if job["outcome"] == "passed"]
+
+    lines = [
+        "# Daily Job Results",
+        "",
+        f"Date: {started_at.date().isoformat()}",
+        f"Run: {run_id}",
+        f"Scored jobs: {stats.scored}",
+        f"Total LLM tokens: {_format_token_count(stats.total_tokens)}",
+        "",
+        "## Job Matches",
+        "",
+    ]
+    if passed_jobs:
+        lines.extend(_compact_job_lines(passed_jobs, settings))
+    else:
+        lines.append("No jobs passed the digest threshold on this run.")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+def _compact_job_lines(jobs: list[dict[str, object]], settings: Settings) -> list[str]:
+    sorted_jobs = sorted(jobs, key=lambda job: _score_value(job), reverse=True)
+    lines: list[str] = []
+    for job in sorted_jobs:
+        score = _score_value(job)
+        label = "TOP" if score >= settings.scoring.top_match_threshold else "PASS"
+        title = job["title"]
+        company = job["company"]
+        location = job["raw_location"] or job["normalized_location"]
+        apply_url = job["apply_url"] or job["canonical_url"]
+        lines.append(f"- [{label}] {score}/100 - {title} at {company} - {location} - [link]({apply_url})")
+    return lines
+
+
+def _score_value(job: dict[str, object]) -> int:
+    score_payload = job.get("score")
+    if isinstance(score_payload, dict):
+        value = score_payload.get("fit_score")
+        if isinstance(value, int):
+            return value
+    return 0
+
+
+def _format_token_count(total_tokens: int) -> str:
+    if total_tokens <= 0:
+        return "not reported"
+    return f"{total_tokens:,}"
 
 
 def _write_debug_output(

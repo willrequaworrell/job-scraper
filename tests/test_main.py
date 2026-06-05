@@ -10,8 +10,9 @@ from unittest import TestCase
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from job_digest.main import _normalize_unique_jobs, _write_debug_output, build_parser
-from job_digest.models import RunStats
+from job_digest.config import load_settings
+from job_digest.main import _normalize_unique_jobs, _write_daily_summary, _write_debug_output, build_parser
+from job_digest.models import RunStats, ScoreResult
 
 
 class MainTests(TestCase):
@@ -88,3 +89,57 @@ class MainTests(TestCase):
         self.assertFalse(payload["email_sent"])
         self.assertEqual(payload["stats"], asdict(stats))
         self.assertEqual(payload["jobs"], jobs)
+
+    def test_write_daily_summary_lists_passing_jobs_compactly(self) -> None:
+        settings = load_settings(Path(__file__).resolve().parents[1] / "config" / "settings.json")
+        stats = RunStats(fetched=10, normalized=8, filtered=3, scored=5, passed=1, duplicate_records=2, total_tokens=1234)
+        started_at = datetime(2026, 6, 5, 12, 0, 0, tzinfo=UTC)
+        completed_at = datetime(2026, 6, 5, 12, 5, 0, tzinfo=UTC)
+        score = ScoreResult(
+            fit_score=88,
+            verdict="strong_match",
+            matching_skills=["React"],
+            gaps=[],
+            seniority_alignment="aligned",
+            location_alignment="aligned",
+            reason_to_apply="Strong fit",
+            reason_to_skip="None",
+            short_digest_summary="Strong frontend fit.",
+        )
+        jobs = [
+            {
+                "identity": "indeed:1",
+                "outcome": "passed",
+                "title": "Frontend Engineer",
+                "company": "Example",
+                "raw_location": "Boston, MA",
+                "normalized_location": "boston, ma",
+                "apply_url": "https://example.com/apply",
+                "canonical_url": "https://example.com/job",
+                "score": asdict(score),
+            }
+        ]
+
+        with TemporaryDirectory() as temp_dir:
+            cwd = Path.cwd()
+            try:
+                import os
+
+                os.chdir(temp_dir)
+                path = _write_daily_summary(
+                    run_id="run-1",
+                    started_at=started_at,
+                    completed_at=completed_at,
+                    stats=stats,
+                    settings=settings,
+                    jobs=jobs,
+                )
+                content = path.read_text(encoding="utf-8")
+            finally:
+                os.chdir(cwd)
+
+        self.assertIn("Scored jobs: 5", content)
+        self.assertIn("Total LLM tokens: 1,234", content)
+        self.assertIn("[TOP] 88/100 - Frontend Engineer at Example - Boston, MA - [link](https://example.com/apply)", content)
+        self.assertNotIn("Fetched:", content)
+        self.assertNotIn("Strong frontend fit.", content)

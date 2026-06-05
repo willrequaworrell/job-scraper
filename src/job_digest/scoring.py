@@ -73,4 +73,10 @@ class OpenAIScorer:
         parsed = message.parsed
         if parsed is None:
             raise RuntimeError(f"OpenAI returned no parsed payload for job {job.identity}")
-        return ScoreResult(**parsed.model_dump())
+        score = ScoreResult(**parsed.model_dump())
+        usage = getattr(completion, "usage", None)
+        if usage is not None:
+            score.prompt_tokens = int(getattr(usage, "prompt_tokens", 0) or 0)
+            score.completion_tokens = int(getattr(usage, "completion_tokens", 0) or 0)
+            score.total_tokens = int(getattr(usage, "total_tokens", 0) or 0)
+        return score

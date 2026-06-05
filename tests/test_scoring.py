@@ -54,7 +54,10 @@ class FakeOpenAI:
 
     def _parse(self, **kwargs: object) -> object:
         type(self).last_parse_kwargs = kwargs
-        return SimpleNamespace(choices=[SimpleNamespace(message=type(self).next_message)])
+        return SimpleNamespace(
+            choices=[SimpleNamespace(message=type(self).next_message)],
+            usage=SimpleNamespace(prompt_tokens=100, completion_tokens=25, total_tokens=125),
+        )
 
 
 def install_fake_openai() -> ModuleType:
@@ -114,6 +117,9 @@ class ScoringTests(TestCase):
         self.assertEqual(FakeOpenAI.last_api_key, "test-key")
         self.assertEqual(result.fit_score, 82)
         self.assertEqual(result.verdict, "strong_match")
+        self.assertEqual(result.prompt_tokens, 100)
+        self.assertEqual(result.completion_tokens, 25)
+        self.assertEqual(result.total_tokens, 125)
         parse_kwargs = FakeOpenAI.last_parse_kwargs
         self.assertIsNotNone(parse_kwargs)
         self.assertEqual(parse_kwargs["model"], "gpt-test")

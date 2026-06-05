@@ -55,12 +55,12 @@ jobs:
 
       - name: Commit updated state and packets
         run: |
-          if git diff --quiet -- data/job_digest.sqlite artifacts/application_packets; then
-            echo "No state or packet changes to commit."
+          if git diff --quiet -- data/job_digest.sqlite artifacts/daily_summaries artifacts/application_packets; then
+            echo "No state, summary, or packet changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/job_digest.sqlite artifacts/application_packets
+          git add data/job_digest.sqlite artifacts/daily_summaries artifacts/application_packets
           git commit -m "chore: update job digest artifacts [skip ci]"
           git push origin HEAD:main

@@ -16,6 +16,9 @@ class ScoreResult:
     reason_to_apply: str
     reason_to_skip: str
     short_digest_summary: str
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
 
 
 @dataclass(slots=True)
@@ -71,3 +74,6 @@ class RunStats:
     passed: int = 0
     emailed: int = 0
     duplicate_records: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0

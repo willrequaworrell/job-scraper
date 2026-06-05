@@ -11,33 +11,33 @@ Comet or any browser assistant may fill forms and draft responses using this pro
 
 - Full name: Will Worrell
 - Location: Greater Boston, Massachusetts
-- Street address without unit number: [FILL_ME_IN]
-- Email: [FILL_ME_IN]
-- Phone: [FILL_ME_IN]
-- LinkedIn: [FILL_ME_IN]
-- GitHub: [FILL_ME_IN]
-- Portfolio: [FILL_ME_IN]
+- Street address without unit number: 106 Myrtle St Boston 02114
+- Email: willrequaworrell@gmail.com
+- Phone: +1 4015789393
+- LinkedIn: linkedin.com/in/wrw
+- GitHub: https://github.com/willrequaworrell
+- Portfolio: willworrell.dev
 
 ## Work Authorization And Eligibility
 
-- Authorized to work in the United States: [FILL_ME_IN]
-- Requires sponsorship now or in the future: [FILL_ME_IN]
-- Citizenship answer: [FILL_ME_IN]
-- Earliest start date / availability: [FILL_ME_IN]
+- Authorized to work in the United States: Yes
+- Requires sponsorship now or in the future: No
+- Citizenship answer: Yes, US citizen
+- Earliest start date / availability: Immediate
 
 ## Demographic, Disability, And Veteran Answers
 
-- Demographic self-identification: [FILL_ME_IN]
-- Disability self-identification: [FILL_ME_IN]
-- Veteran status: [FILL_ME_IN]
-- Gender identity / pronouns if requested: [FILL_ME_IN]
+- Demographic self-identification: White, non-Hispanic
+- Disability self-identification: No disability
+- Veteran status: Not a veteran
+- Gender identity / pronouns if requested: Straight, he/him
 
 ## Role Preferences
 
 - Target roles: frontend engineer, frontend-leaning full-stack engineer, web engineer, product-minded software engineer, AI application engineer.
 - Target geography: Greater Boston / Massachusetts local or hybrid roles; US remote roles are also acceptable.
 - Remote/hybrid/on-site preference: local, hybrid, and remote are all acceptable when the role is otherwise strong.
-- Salary expectation guidance: [FILL_ME_IN]
+- Salary expectation guidance: N/A
 - Relocation: [FILL_ME_IN]
 
 ## Experience Positioning
